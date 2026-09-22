@@ -1,0 +1,205 @@
+Sources and Architecture Traceability for the SynthSR-Inspired MRI Reconstruction MVP
+
+The architecture diagram and project structure were based on a combination of published MRI super-resolution methods, the SynthSR methodology, standard 3D U-Net design, and 3D Slicer development material. A few parts—mainly the exact file/module organization—were software-engineering design choices rather than something copied directly from a paper.
+
+1. Iglesias et al. — SynthSR
+
+Title:
+“Joint super-resolution and synthesis of 1 mm isotropic MP-RAGE volumes from clinical MRI exams with scans of different orientation, resolution and contrast”
+
+Role in the project:
+This is the primary source behind the overall research pipeline. SynthSR takes low-resolution or spaced-slice MRI and learns to produce an isotropic high-resolution output. A major methodological idea is synthetic data generation rather than requiring real paired low-resolution/high-resolution acquisitions.
+
+This informed:
+
+HR / synthetic source
+       ↓
+Synthetic degradation
+       ↓
+Low-resolution / spaced-slice MRI
+       ↓
+CNN reconstruction
+       ↓
+Isotropic HR MRI
+
+It is also the main justification for making the synthetic sparse-slice simulator a core research component, even if real sparse scans later become available.
+
+2. Du et al. — Residual CNN for anisotropic MRI super-resolution
+
+Title:
+“Super-resolution reconstruction of single anisotropic 3D MR images using residual convolutional neural network”
+
+Role in the project:
+This work directly targets reconstruction of high-resolution isotropic MRI from anisotropic MRI. It uses residual learning and CNN-based reconstruction to recover high-frequency information.
+
+This informed:
+
+Interpolated sparse / anisotropic MRI
+       ↓
+CNN predicts missing information
+       ↓
+Residual / skip connection
+       ↓
+High-resolution reconstruction
+
+It is the main source behind the residual formulation:
+
+reconstruction = interpolated input + predicted residual
+
+It also informed the use of interpolation as a baseline and evaluation with metrics such as PSNR and SSIM.
+
+3. Çiçek et al. — 3D U-Net
+
+Title:
+“3D U-Net: Learning Dense Volumetric Segmentation from Sparse Annotation”
+
+Role in the project:
+Although this is a volumetric segmentation paper rather than a super-resolution paper, it provides the architectural basis for a 3D U-Net using:
+
+- 3D convolutions
+- encoder/downsampling path
+- bottleneck
+- decoder/upsampling path
+- skip connections between matching resolutions
+
+This informed the proposed model:
+
+3D U-Net
+
+Encoder
+↓
+Bottleneck
+↓
+Decoder
+
+with encoder-to-decoder skip connections.
+
+4. Broader deep-learning MRI super-resolution literature
+
+Role in the project:
+The broader literature supports framing the task as:
+
+Low-resolution / anisotropic MRI
+       ↓
+Deep reconstruction model
+       ↓
+High-resolution / isotropic MRI
+
+It also supports:
+- interpolation baselines
+- residual learning
+- quantitative comparison against ground truth
+- metrics such as PSNR and SSIM
+
+5. Queen’s 3D Slicer Programming Tutorial
+
+Role in the project:
+The tutorial informed the decision to use 3D Slicer mainly as the visualization and validation endpoint instead of placing the entire machine-learning pipeline inside Slicer.
+
+Relevant concepts from the tutorial include:
+- scripted Python modules for prototyping
+- separation of GUI and processing logic
+- MRML volume nodes
+- NumPy access to volumetric data
+- loading and manipulating medical-image volumes
+
+This supports the project endpoint:
+
+Reconstructed volume
+       ↓
+.nii.gz
+       ↓
+3D Slicer
+       ↓
+Visual inspection and comparison
+
+6. Slicer Developer Tutorial by Pujol and Pieper
+
+Role in the project:
+This tutorial similarly describes Python scripted modules as suitable for fast prototyping and workflow development and shows that Slicer provides direct access to medical-image volumes and NumPy arrays.
+
+This supports:
+- exporting reconstructed volumes as NIfTI
+- opening them in 3D Slicer
+- eventual integration into a Slicer module if needed
+
+Software-engineering choices that were not taken directly from the papers
+
+The following repository structure was an engineering recommendation:
+
+project/
+│
+├── data/
+│
+├── src/
+│   ├── data_loader.py
+│   ├── preprocessing.py
+│   ├── sparse_simulator.py
+│   ├── interpolation.py
+│   │
+│   ├── models/
+│   │   ├── blocks.py
+│   │   └── unet3d.py
+│   │
+│   ├── losses.py
+│   ├── metrics.py
+│   ├── train.py
+│   ├── evaluate.py
+│   ├── inference.py
+│   └── export_nifti.py
+│
+├── checkpoints/
+├── outputs/
+└── requirements.txt
+
+No paper requires this exact structure. It was chosen because each file corresponds to a distinct stage of the research pipeline and can be tested independently.
+
+The following were also practical MVP choices rather than exact settings taken from SynthSR:
+
+- 64×64×64 training patches
+- Adam optimizer
+- learning rate around 1e-4
+- 16 → 32 → 64 → 128 feature channels
+- L1 loss as the first loss function
+- sliding-window inference
+
+Architecture traceability summary
+
+SynthSR
+   ↓
+Synthetic degradation methodology
++ sparse/thick-slice → isotropic MRI objective
+
+Du et al.
+   ↓
+MRI super-resolution
++ residual reconstruction
++ interpolation baseline
++ PSNR / SSIM
+
+3D U-Net
+   ↓
+encoder
++ decoder
++ 3D convolutions
++ skip connections
+
+Software-engineering design
+   ↓
+PyTorch module/file separation
++ patch-based training
++ training/evaluation scripts
++ inference pipeline
+
+3D Slicer tutorials
+   ↓
+NIfTI/volume inspection
++ Python integration
++ eventual Slicer module possibility
+
+Recommended main references for a project proposal
+
+1. SynthSR paper — primary methodological reference
+2. Du et al. residual CNN MRI super-resolution paper — reconstruction formulation
+3. 3D U-Net paper — network architecture
+4. 3D Slicer programming tutorials — implementation and visualization tooling

@@ -1,0 +1,6 @@
+torch
+numpy
+nibabel
+scipy
+scikit-image
+tqdm
