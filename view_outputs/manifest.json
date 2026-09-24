@@ -1,0 +1,109 @@
+{
+  "patient": 15,
+  "source": "ReMIND_Original/Patient_15_T1_FullHead.nii.gz",
+  "execution_order": [
+    "data_loader (required input step)",
+    "sparse_simulator",
+    "interpolation",
+    "preprocessing"
+  ],
+  "parameters": {
+    "axis": 2,
+    "factor": 4,
+    "sigma": 1.0,
+    "interpolation_method": "linear",
+    "preprocessing_target_shape": null
+  },
+  "slice_indices": [
+    0,
+    4,
+    8,
+    12,
+    16,
+    20,
+    24,
+    28,
+    32,
+    36,
+    40,
+    44,
+    48,
+    52,
+    56,
+    60,
+    64,
+    68,
+    72,
+    76,
+    80,
+    84,
+    88,
+    92,
+    96,
+    100,
+    104,
+    108,
+    112,
+    116,
+    120,
+    124,
+    128,
+    132,
+    136,
+    140,
+    144,
+    148,
+    152,
+    156,
+    160,
+    164,
+    168,
+    172,
+    176,
+    180,
+    184,
+    188
+  ],
+  "stages": {
+    "data_loader": {
+      "path": "view_outputs/01_data_loader/Patient_15_loaded.nii.gz",
+      "shape": [
+        224,
+        256,
+        192
+      ],
+      "dtype": "int16"
+    },
+    "sparse_simulator": {
+      "path": "view_outputs/02_sparse_simulator/Patient_15_sparse_axis2_factor4_sigma1.nii.gz",
+      "shape": [
+        224,
+        256,
+        48
+      ],
+      "dtype": "float32"
+    },
+    "interpolation": {
+      "path": "view_outputs/03_interpolation/Patient_15_interpolated_linear.nii.gz",
+      "shape": [
+        224,
+        256,
+        192
+      ],
+      "dtype": "float32"
+    },
+    "preprocessing": {
+      "path": "view_outputs/04_preprocessing/Patient_15_preprocessed_normalized.nii.gz",
+      "shape": [
+        224,
+        256,
+        192
+      ],
+      "dtype": "float32",
+      "value_range": [
+        0.0,
+        1.0
+      ]
+    }
+  }
+}

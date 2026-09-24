@@ -1,0 +1,6 @@
+.venv/
+.pipeline-venv/
+IXI-Dataset.zip/
+OpenNeuro_Originals/
+ReMIND_Original/
+.DS_Store
