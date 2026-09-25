@@ -4,3 +4,5 @@ IXI-Dataset.zip/
 OpenNeuro_Originals/
 ReMIND_Original/
 .DS_Store
+data/development_subjects.csv
+data/test_subjects.csv
